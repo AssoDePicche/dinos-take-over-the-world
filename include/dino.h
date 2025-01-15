@@ -43,8 +43,20 @@ typedef struct Dino {
   DinoState state;
 } Dino;
 
-#define DINO_SPRITE_FRAMES (u8)24u
-
 #define WORLD_GRAVITY (f32)9.81f
+
+typedef struct Animation {
+  Texture2D texture;
+  f64 timer;
+  f64 frameTime;
+  u8 startFrame;
+  u8 endFrame;
+  u8 currentFrame;
+  u8 textureFrames;
+} Animation;
+
+void UpdateAnimation(Animation *);
+
+void DrawDinoAnimation(const Dino *, const Animation *);
 
 #endif
