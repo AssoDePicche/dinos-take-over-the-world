@@ -9,56 +9,112 @@ int main(void) {
 
   SetTargetFPS(60);
 
-  Dino dino = (Dino){
-      .box = (Rectangle){.x = 0, .y = 0, .width = 48.0f, .height = 48.0f},
-      .velocity = (Vector2){.x = 10.0f, .y = 200.0f},
-      .state = DINO_STATE_IDLE};
+  const f64 DEFAULT_FRAME_TIME = 1.0f / 12.0f;
 
-  Animation animation =
-      (Animation){.texture = LoadTexture("./resources/sprites/blue.png"),
-                  .timer = 0.0f,
-                  .frameTime = 0.12f,
-                  .startFrame = 0u,
-                  .endFrame = 4u,
-                  .currentFrame = 0u,
-                  .textureFrames = 24u};
+  Sprite sprite = (Sprite){
+      .texture = LoadTexture("./resources/sprites/blue.png"),
+      .box = (Rectangle){.x = 0,
+                         .y = GetScreenHeight() - 48.0f,
+                         .width = 48.0f,
+                         .height = 48.0f},
+      .state = SPRITE_STATE_IDLE,
+      .textureFrames = 24u,
+      .walk_speed = 5.0f,
+      .run_speed = 8.0f,
+      .facingRight = true,
+      .isRunning = false,
+  };
+
+  Animation animation[] = {
+      (Animation){
+          .timer = 0.0f,
+          .frameTime = DEFAULT_FRAME_TIME,
+          .firstFrame = 0u,
+          .lastFrame = 4u,
+          .currentFrame = 0u,
+          .loop = true,
+      },
+      (Animation){
+          .timer = 0.0f,
+          .frameTime = DEFAULT_FRAME_TIME,
+          .firstFrame = 5u,
+          .lastFrame = 10u,
+          .currentFrame = 5u,
+          .loop = true,
+      },
+      (Animation){
+          .timer = 0.0f,
+          .frameTime = DEFAULT_FRAME_TIME,
+          .firstFrame = 18u,
+          .lastFrame = 24u,
+          .currentFrame = 18u,
+          .loop = true,
+      },
+      (Animation){
+          .timer = 0.0f,
+          .frameTime = DEFAULT_FRAME_TIME,
+          .firstFrame = 10u,
+          .lastFrame = 13u,
+          .currentFrame = 10u,
+          .loop = false,
+      },
+      (Animation){
+          .timer = 0.0f,
+          .frameTime = DEFAULT_FRAME_TIME,
+          .firstFrame = 14u,
+          .lastFrame = 17u,
+          .currentFrame = 14u,
+          .loop = false,
+      },
+  };
 
   while (!WindowShouldClose()) {
-    dino.state = DINO_STATE_IDLE;
+    if (sprite.state != SPRITE_STATE_ATTACKING) {
+      sprite.state = SPRITE_STATE_IDLE;
+    }
+
+    sprite.isRunning =
+        IsKeyDown(KEY_LEFT_SHIFT) ||
+        IsGamepadButtonDown(gamepad, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT);
 
     if (IsKeyDown(KEY_A) ||
         IsGamepadButtonDown(gamepad, GAMEPAD_BUTTON_LEFT_FACE_LEFT)) {
-      dino.state = DINO_STATE_MOVING_LEFT;
+      sprite.facingRight = false;
 
-      dino.box.x = MAX(dino.box.x - 10, 0);
+      sprite.state =
+          sprite.isRunning ? SPRITE_STATE_RUNNING : SPRITE_STATE_WALKING;
     }
 
     if (IsKeyDown(KEY_D) ||
         IsGamepadButtonDown(gamepad, GAMEPAD_BUTTON_LEFT_FACE_RIGHT)) {
-      dino.state = DINO_STATE_MOVING_RIGHT;
+      sprite.facingRight = true;
 
-      dino.box.x = MIN(dino.box.x + 10, GetScreenWidth() - dino.box.width);
+      sprite.state =
+          sprite.isRunning ? SPRITE_STATE_RUNNING : SPRITE_STATE_WALKING;
     }
 
-    UpdateAnimation(&animation);
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) ||
+        IsGamepadButtonPressed(gamepad, GAMEPAD_BUTTON_RIGHT_FACE_LEFT)) {
+      animation[SPRITE_STATE_ATTACKING].currentFrame =
+          animation[SPRITE_STATE_ATTACKING].firstFrame;
 
-    dino.box.y = MIN(dino.box.y + dino.velocity.y * GetFrameTime(),
-                     GetScreenHeight() - dino.box.height);
+      sprite.state = SPRITE_STATE_ATTACKING;
+    }
 
-    dino.velocity.y = dino.velocity.y + WORLD_GRAVITY;
+    sprite.animation = &animation[sprite.state];
 
     BeginDrawing();
 
     ClearBackground(RAYWHITE);
 
-    DrawRectangleLinesEx(dino.box, 1.0f, RED);
+    UpdateSprite(&sprite, GetTime());
 
-    DrawDinoAnimation(&dino, &animation);
+    DrawSprite(&sprite);
 
     EndDrawing();
   }
 
-  UnloadTexture(animation.texture);
+  UnloadTexture(sprite.texture);
 
   CloseWindow();
 

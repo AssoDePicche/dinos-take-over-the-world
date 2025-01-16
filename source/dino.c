@@ -1,36 +1,63 @@
 #include "dino.h"
 
-void UpdateAnimation(Animation *animation) {
-  const f64 CURRENT_TIME = GetTime();
+void DrawSprite(const Sprite *this) {
+  const u64 sprite_width = this->texture.width / this->textureFrames;
 
-  if (CURRENT_TIME <= animation->timer + animation->frameTime) {
+  const u64 sprite_height = this->texture.height;
+
+  const u64 sprite_scale = this->box.width / sprite_width;
+
+  Rectangle source = (Rectangle){
+      this->animation->currentFrame * sprite_width,
+      0.0f,
+      sprite_width,
+      sprite_height,
+  };
+
+  Rectangle destination = (Rectangle){
+      this->box.x + sprite_width,
+      this->box.y + sprite_height,
+      sprite_scale * sprite_width,
+      sprite_scale * this->texture.height,
+  };
+
+  Vector2 origin = (Vector2){sprite_width, sprite_height};
+
+  if (!this->facingRight) {
+    source.width = -source.width;
+  }
+
+  DrawTexturePro(this->texture, source, destination, origin, 0, WHITE);
+
+  DrawRectangleLinesEx(this->box, 1.0f, RED);
+}
+
+void UpdateSprite(Sprite *this, const f64 now) {
+  if (this->state == SPRITE_STATE_WALKING) {
+    this->box.x = this->facingRight ? MIN(this->box.x + this->walk_speed,
+                                          GetScreenWidth() - this->box.width)
+                                    : MAX(this->box.x - this->walk_speed, 0);
+  }
+
+  if (this->state == SPRITE_STATE_RUNNING) {
+    this->box.x = (this->facingRight) ? MIN(this->box.x + this->run_speed,
+                                            GetScreenWidth() - this->box.width)
+                                      : MAX(this->box.x - this->run_speed, 0);
+  }
+
+  if (now <= this->animation->timer + this->animation->frameTime) {
     return;
   }
 
-  animation->timer = CURRENT_TIME;
+  this->animation->timer = now;
 
-  ++animation->currentFrame;
+  ++this->animation->currentFrame;
 
-  if (animation->currentFrame >= animation->endFrame) {
-    animation->currentFrame = animation->startFrame;
+  if (this->animation->currentFrame < this->animation->lastFrame) {
+    return;
   }
-}
 
-void DrawDinoAnimation(const Dino *dino, const Animation *animation) {
-  Rectangle source =
-      (Rectangle){animation->currentFrame * animation->texture.width /
-                      animation->textureFrames,
-                  0, animation->texture.width / animation->textureFrames,
-                  animation->texture.height};
-
-  Rectangle destination = (Rectangle){
-      dino->box.x + animation->texture.width / animation->textureFrames,
-      dino->box.y + animation->texture.height,
-      2 * animation->texture.width / animation->textureFrames,
-      animation->texture.height * 2};
-
-  Vector2 origin = {animation->texture.width / animation->textureFrames,
-                    animation->texture.height};
-
-  DrawTexturePro(animation->texture, source, destination, origin, 0, WHITE);
+  this->animation->currentFrame = this->animation->loop
+                                      ? this->animation->firstFrame
+                                      : this->animation->lastFrame;
 }

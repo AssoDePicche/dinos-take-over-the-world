@@ -31,32 +31,37 @@ typedef int8_t i8;
 
 typedef char *Str;
 
-typedef enum DinoState {
-  DINO_STATE_IDLE,
-  DINO_STATE_MOVING_RIGHT,
-  DINO_STATE_MOVING_LEFT,
-} DinoState;
-
-typedef struct Dino {
-  Rectangle box;
-  Vector2 velocity;
-  DinoState state;
-} Dino;
-
-#define WORLD_GRAVITY (f32)9.81f
-
 typedef struct Animation {
-  Texture2D texture;
   f64 timer;
   f64 frameTime;
-  u8 startFrame;
-  u8 endFrame;
+  u8 firstFrame;
+  u8 lastFrame;
   u8 currentFrame;
-  u8 textureFrames;
+  bool loop;
 } Animation;
 
-void UpdateAnimation(Animation *);
+typedef enum SpriteState {
+  SPRITE_STATE_IDLE = 0u,
+  SPRITE_STATE_WALKING,
+  SPRITE_STATE_RUNNING,
+  SPRITE_STATE_ATTACKING,
+  SPRITE_STATE_HURTING,
+} SpriteState;
 
-void DrawDinoAnimation(const Dino *, const Animation *);
+typedef struct Sprite {
+  Animation *animation;
+  Texture2D texture;
+  Rectangle box;
+  f32 walk_speed;
+  f32 run_speed;
+  u8 textureFrames;
+  SpriteState state;
+  bool facingRight;
+  bool isRunning;
+} Sprite;
+
+void DrawSprite(const Sprite *);
+
+void UpdateSprite(Sprite *, const f64);
 
 #endif
