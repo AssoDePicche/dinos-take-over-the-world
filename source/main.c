@@ -11,6 +11,14 @@ int main(void) {
 
   const f64 DEFAULT_FRAME_TIME = 1.0f / 12.0f;
 
+  InitAudioDevice();
+
+  Music theme = LoadMusicStream("./resources/music/manlorette_party.mp3");
+
+  SetMusicVolume(theme, 0.75f);
+
+  PlayMusicStream(theme);
+
   Sprite sprite = (Sprite){
       .texture = LoadTexture("./resources/sprites/blue.png"),
       .box = (Rectangle){.x = 0,
@@ -83,6 +91,12 @@ int main(void) {
   };
 
   while (!WindowShouldClose()) {
+    UpdateMusicStream(theme);
+
+    if (!IsMusicStreamPlaying(theme)) {
+      PlayMusicStream(theme);
+    }
+
     if (sprite.state != SPRITE_STATE_ATTACKING) {
       sprite.state = SPRITE_STATE_IDLE;
     }
@@ -136,6 +150,10 @@ int main(void) {
   }
 
   UnloadTexture(sprite.texture);
+
+  UnloadMusicStream(theme);
+
+  CloseAudioDevice();
 
   CloseWindow();
 
