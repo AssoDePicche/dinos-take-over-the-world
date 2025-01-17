@@ -68,6 +68,20 @@ int main(void) {
       },
   };
 
+  Camera2D camera = {
+      .target =
+          (Vector2){
+              .x = sprite.box.x,
+              .y = sprite.box.y,
+          },
+      .offset =
+          (Vector2){
+              .x = GetScreenWidth() / 2.0f,
+              .y = GetScreenHeight() / 2.0f,
+          },
+      .zoom = 1.0f,
+  };
+
   while (!WindowShouldClose()) {
     if (sprite.state != SPRITE_STATE_ATTACKING) {
       sprite.state = SPRITE_STATE_IDLE;
@@ -103,9 +117,16 @@ int main(void) {
 
     sprite.animation = &animation[sprite.state];
 
+    camera.target = (Vector2){
+        .x = sprite.box.x,
+        .y = sprite.box.y,
+    };
+
     BeginDrawing();
 
     ClearBackground(RAYWHITE);
+
+    BeginMode2D(camera);
 
     UpdateSprite(&sprite, GetTime());
 
