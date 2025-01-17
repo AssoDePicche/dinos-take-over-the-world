@@ -31,12 +31,18 @@ typedef int8_t i8;
 
 typedef char *Str;
 
+typedef struct Sfx {
+  Sound sound;
+  f32 volume;
+} Sfx;
+
 typedef struct Animation {
   f64 timer;
   f64 frameTime;
   u8 firstFrame;
   u8 lastFrame;
   u8 currentFrame;
+  Sfx *sfx;
   bool loop;
 } Animation;
 
