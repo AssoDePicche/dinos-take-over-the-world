@@ -102,4 +102,10 @@ void UpdateSprite(Sprite *this, const f64 now) {
       this->animation->ended) {
     --this->lifes;
   }
+
+  if ((this->state != SPRITE_STATE_ATTACKING &&
+       this->state != SPRITE_STATE_HURTING) ||
+      this->animation->ended) {
+    this->state = SPRITE_STATE_IDLE;
+  }
 }
