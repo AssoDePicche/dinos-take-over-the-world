@@ -55,8 +55,8 @@ typedef enum SpriteState {
 } SpriteState;
 
 typedef struct Sprite {
-  Animation *animation;
   Texture2D texture;
+  Texture2D shadow;
   Rectangle box;
   f32 walk_speed;
   f32 run_speed;
@@ -64,6 +64,8 @@ typedef struct Sprite {
   SpriteState state;
   bool facingRight;
   bool isRunning;
+  bool hasShadow;
+  Animation *animation;
 } Sprite;
 
 void DrawSprite(const Sprite *);

@@ -47,10 +47,9 @@ int main(void) {
       },
   };
 
-  Texture2D sprite_shadow = LoadTexture("./resources/sprites/shadow.png");
-
   Sprite sprite = (Sprite){
       .texture = LoadTexture("./resources/sprites/blue.png"),
+      .shadow = LoadTexture("./resources/sprites/shadow.png"),
       .box = (Rectangle){.x = 0,
                          .y = GetScreenHeight() - 48.0f,
                          .width = 48.0f,
@@ -61,6 +60,7 @@ int main(void) {
       .run_speed = 8.0f,
       .facingRight = true,
       .isRunning = false,
+      .hasShadow = true,
   };
 
   Animation animation[] = {
@@ -178,25 +178,6 @@ int main(void) {
 
     UpdateSprite(&sprite, GetTime());
 
-    DrawTexturePro(sprite_shadow,
-                   (Rectangle){
-                       .x = 0.0f,
-                       .y = 0.0f,
-                       .width = 24.0f,
-                       .height = 24.0f,
-                   },
-                   (Rectangle){
-                       .x = sprite.box.x,
-                       .y = sprite.box.y,
-                       .width = 48.0f,
-                       .height = 48.0f,
-                   },
-                   (Vector2){
-                       .x = 0.0f,
-                       .y = 0.0f,
-                   },
-                   0, WHITE);
-
     DrawSprite(&sprite);
 
     EndMode2D();
@@ -259,7 +240,7 @@ int main(void) {
 
   UnloadTexture(keyboard_texture_extra);
 
-  UnloadTexture(sprite_shadow);
+  UnloadTexture(sprite.shadow);
 
   UnloadTexture(sprite.texture);
 

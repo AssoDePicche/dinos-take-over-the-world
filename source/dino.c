@@ -27,6 +27,27 @@ void DrawSprite(const Sprite *this) {
     source.width = -source.width;
   }
 
+  if (this->hasShadow) {
+    DrawTexturePro(this->shadow,
+                   (Rectangle){
+                       .x = 0.0f,
+                       .y = 0.0f,
+                       .width = 24.0f,
+                       .height = 24.0f,
+                   },
+                   (Rectangle){
+                       .x = this->box.x,
+                       .y = this->box.y,
+                       .width = 48.0f,
+                       .height = 48.0f,
+                   },
+                   (Vector2){
+                       .x = 0.0f,
+                       .y = 0.0f,
+                   },
+                   0, WHITE);
+  }
+
   DrawTexturePro(this->texture, source, destination, origin, 0, WHITE);
 
   DrawRectangleLinesEx(this->box, 1.0f, RED);
