@@ -97,6 +97,10 @@ int main(void) {
       PlayMusicStream(theme);
     }
 
+    if (IsCursorOnScreen()) {
+      HideCursor();
+    }
+
     if (sprite.state != SPRITE_STATE_ATTACKING) {
       sprite.state = SPRITE_STATE_IDLE;
     }
