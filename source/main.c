@@ -47,6 +47,30 @@ int main(void) {
       },
   };
 
+  Texture2D xbox_texture = LoadTexture("./resources/ui/xbox.png");
+
+  const u8 XBOX_TEXTURE_COMPONENTS = 4u;
+
+  // X, A, Y, B
+  const Vector2 xbox_texture_source[] = {
+      (Vector2){
+          .x = 16.0f,
+          .y = 32.0f,
+      },
+      (Vector2){
+          .x = 16.0f,
+          .y = 48.0f,
+      },
+      (Vector2){
+          .x = 16.0f,
+          .y = 64.0f,
+      },
+      (Vector2){
+          .x = 16.0f,
+          .y = 80.0f,
+      },
+  };
+
   Sprite sprite = (Sprite){
       .texture = LoadTexture("./resources/sprites/blue.png"),
       .shadow = LoadTexture("./resources/sprites/shadow.png"),
@@ -227,14 +251,36 @@ int main(void) {
                      },
                      0, WHITE);
     } else {
-      DrawText(
-          "<A>/<D> - right/left (hold <Shift> to run)\n<K> - attack\n<H> - "
-          "help",
-          10, 10, 20, BLACK);
+      f64 x = 10.0f;
+
+      for (u8 index = 0u; index < XBOX_TEXTURE_COMPONENTS; ++index) {
+        DrawTexturePro(xbox_texture,
+                       (Rectangle){
+                           .x = xbox_texture_source[index].x,
+                           .y = xbox_texture_source[index].y,
+                           .width = 16.0f,
+                           .height = 16.0f,
+                       },
+                       (Rectangle){
+                           .x = x,
+                           .y = GetScreenHeight() - 32.0f - 10.0f,
+                           .width = 32.0f,
+                           .height = 32.0f,
+                       },
+                       (Vector2){
+                           .x = 0.0f,
+                           .y = 0.0f,
+                       },
+                       0, WHITE);
+
+        x += 32.0f;
+      }
     }
 
     EndDrawing();
   }
+
+  UnloadTexture(xbox_texture);
 
   UnloadTexture(keyboard_texture);
 
