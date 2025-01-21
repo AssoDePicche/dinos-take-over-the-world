@@ -122,6 +122,9 @@ int main(void) {
 
   const u8 XBOX_TEXTURE_COMPONENTS = ARRAY_LENGTH(xbox_texture_source);
 
+  Texture2D lifebar_texture =
+      LoadTexture("./resources/sprites/lifebar_32x32.png");
+
   Sprite sprite = (Sprite){
       .texture = LoadTexture("./resources/sprites/blue.png"),
       .shadow = LoadTexture("./resources/sprites/shadow.png"),
@@ -131,6 +134,7 @@ int main(void) {
                          .height = 48.0f},
       .state = SPRITE_STATE_IDLE,
       .textureFrames = 24u,
+      .lifes = 3u,
       .walk_speed = 5.0f,
       .run_speed = 8.0f,
       .facingRight = true,
@@ -138,6 +142,7 @@ int main(void) {
       .hasShadow = true,
   };
 
+  // IDLE, WALK, RUN, ATTACK, HURT
   Animation animation[] = {
       (Animation){
           .timer = 0.0f,
@@ -170,6 +175,7 @@ int main(void) {
           .lastFrame = 13u,
           .currentFrame = 10u,
           .loop = false,
+          .restart = true,
       },
       (Animation){
           .timer = 0.0f,
@@ -178,6 +184,7 @@ int main(void) {
           .lastFrame = 17u,
           .currentFrame = 14u,
           .loop = false,
+          .restart = true,
       },
   };
 
@@ -206,10 +213,6 @@ int main(void) {
       HideCursor();
     }
 
-    if (sprite.state != SPRITE_STATE_ATTACKING) {
-      sprite.state = SPRITE_STATE_IDLE;
-    }
-
     sprite.isRunning =
         IsKeyDown(KEY_LEFT_SHIFT) ||
         IsGamepadButtonDown(gamepad, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT);
@@ -230,13 +233,11 @@ int main(void) {
           sprite.isRunning ? SPRITE_STATE_RUNNING : SPRITE_STATE_WALKING;
     }
 
-    if (IsKeyPressed(KEY_K) ||
-        IsGamepadButtonPressed(gamepad, GAMEPAD_BUTTON_RIGHT_FACE_LEFT)) {
-      animation[SPRITE_STATE_ATTACKING].currentFrame =
-          animation[SPRITE_STATE_ATTACKING].firstFrame;
-
-      sprite.state = SPRITE_STATE_ATTACKING;
-    }
+    sprite.state =
+        IsKeyPressed(KEY_K) ||
+                IsGamepadButtonPressed(gamepad, GAMEPAD_BUTTON_RIGHT_FACE_LEFT)
+            ? sprite.state = SPRITE_STATE_ATTACKING
+            : sprite.state;
 
     sprite.animation = &animation[sprite.state];
 
@@ -257,6 +258,27 @@ int main(void) {
 
     EndMode2D();
 
+    for (u8 i = 0u; i < sprite.lifes; ++i) {
+      DrawTexturePro(lifebar_texture,
+                     (Rectangle){
+                         .x = 0.0f,
+                         .y = 0.0f,
+                         .width = 32.0f,
+                         .height = 32.0f,
+                     },
+                     (Rectangle){
+                         .x = 10.0f + i * 32.0f,
+                         .y = 10.0f,
+                         .width = 32.0f,
+                         .height = 32.0f,
+                     },
+                     (Vector2){
+                         .x = 0.0f,
+                         .y = 0.0f,
+                     },
+                     0, WHITE);
+    }
+
     if (!IsGamepadAvailable(gamepad)) {
       DrawRecArray(keyboard_texture_source, KEYBOARD_TEXTURE_COMPONENTS,
                    keyboard_texture);
@@ -274,6 +296,8 @@ int main(void) {
   UnloadTexture(sprite.shadow);
 
   UnloadTexture(sprite.texture);
+
+  UnloadTexture(lifebar_texture);
 
   UnloadMusicStream(theme);
 
