@@ -1,5 +1,38 @@
 #include "dino.h"
 
+void DrawRecArray(const Rectangle array[], const u8 length,
+                  const Texture2D texture) {
+  const f32 padding = 10.0f;
+
+  const f32 scale_factor = 2.0f;
+
+  f32 x = padding;
+
+  const Vector2 origin = (Vector2){
+      .x = 0.0f,
+      .y = 0.0f,
+  };
+
+  for (u8 index = 0; index < length; ++index) {
+    Rectangle source = array[index];
+
+    const f32 width = scale_factor * source.width;
+
+    const f32 height = scale_factor * source.height;
+
+    DrawTexturePro(texture, source,
+                   (Rectangle){
+                       .x = x,
+                       .y = GetScreenHeight() - height - padding,
+                       .width = width,
+                       .height = height,
+                   },
+                   origin, 0, WHITE);
+
+    x += height;
+  }
+}
+
 int main(void) {
   const u8 gamepad = 0;
 
@@ -225,47 +258,10 @@ int main(void) {
     EndMode2D();
 
     if (!IsGamepadAvailable(gamepad)) {
-      f64 x = 10.0f;
-
-      for (u8 index = 0u; index < KEYBOARD_TEXTURE_COMPONENTS; ++index) {
-        DrawTexturePro(
-            keyboard_texture, keyboard_texture_source[index],
-            (Rectangle){
-                .x = x,
-                .y = GetScreenHeight() -
-                     2.0f * keyboard_texture_source[index].height - 10.0f,
-                .width = 2.0f * keyboard_texture_source[index].width,
-                .height = 2.0f * keyboard_texture_source[index].height,
-            },
-            (Vector2){
-                .x = 0.0f,
-                .y = 0.0f,
-            },
-            0, WHITE);
-
-        x += 32.0f;
-      }
+      DrawRecArray(keyboard_texture_source, KEYBOARD_TEXTURE_COMPONENTS,
+                   keyboard_texture);
     } else {
-      f64 x = 10.0f;
-
-      for (u8 index = 0u; index < XBOX_TEXTURE_COMPONENTS; ++index) {
-        DrawTexturePro(
-            xbox_texture, xbox_texture_source[index],
-            (Rectangle){
-                .x = x,
-                .y = GetScreenHeight() -
-                     2.0f * xbox_texture_source[index].height - 10.0f,
-                .width = 2.0f * xbox_texture_source[index].width,
-                .height = 2.0f * xbox_texture_source[index].height,
-            },
-            (Vector2){
-                .x = 0.0f,
-                .y = 0.0f,
-            },
-            0, WHITE);
-
-        x += 32.0f;
-      }
+      DrawRecArray(xbox_texture_source, XBOX_TEXTURE_COMPONENTS, xbox_texture);
     }
 
     EndDrawing();
