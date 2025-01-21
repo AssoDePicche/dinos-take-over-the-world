@@ -180,7 +180,7 @@ int main(void) {
 
     EndMode2D();
 
-    if (IsGamepadAvailable(gamepad)) {
+    if (!IsGamepadAvailable(gamepad)) {
       f64 x = 10.0f;
 
       for (u8 index = 0u; index < KEYBOARD_TEXTURE_COMPONENTS; ++index) {
