@@ -15,61 +15,79 @@ int main(void) {
 
   Music theme = LoadMusicStream("./resources/music/manlorette_party.mp3");
 
-  SetMusicVolume(theme, 0.75f);
+  SetMusicVolume(theme, 0.0f);
 
   PlayMusicStream(theme);
 
-  Texture2D keyboard_texture =
-      LoadTexture("./resources/ui/desktop/default.png");
+  Texture2D keyboard_texture = LoadTexture("./resources/ui/keyboard.png");
 
-  Texture2D keyboard_texture_extra =
-      LoadTexture("./resources/ui/desktop/extra.png");
-
-  const u8 KEYBOARD_TEXTURE_COMPONENTS = 4u;
-
-  // A, D, K, Q
-  const Vector2 keyboard_texture_source[] = {
-      (Vector2){
-          .x = 0.0f,
-          .y = 32.0f,
-      },
-      (Vector2){
-          .x = 48.0f,
-          .y = 32.0f,
-      },
-      (Vector2){
-          .x = 32.0f,
-          .y = 48.0f,
-      },
-      (Vector2){
-          .x = 0.0f,
+  // A, D, K, Q, SHIFT
+  const Rectangle keyboard_texture_source[] = {
+      (Rectangle){
+          .x = 64.0f,
           .y = 64.0f,
+          .width = 16.0f,
+          .height = 16.0f,
+      },
+      (Rectangle){
+          .x = 96.0f,
+          .y = 64.0f,
+          .width = 16.0f,
+          .height = 16.0f,
+      },
+      (Rectangle){
+          .x = 176.0f,
+          .y = 64.0f,
+          .width = 16.0f,
+          .height = 16.0f,
+      },
+      (Rectangle){
+          .x = 64.0f,
+          .y = 48.0f,
+          .width = 16.0f,
+          .height = 16.0f,
+      },
+      (Rectangle){
+          .x = 36.0f,
+          .y = 80.0f,
+          .width = 24.0f,
+          .height = 16.0f,
       },
   };
+
+  const u8 KEYBOARD_TEXTURE_COMPONENTS = ARRAY_LENGTH(keyboard_texture_source);
 
   Texture2D xbox_texture = LoadTexture("./resources/ui/xbox.png");
 
-  const u8 XBOX_TEXTURE_COMPONENTS = 4u;
-
   // X, A, Y, B
-  const Vector2 xbox_texture_source[] = {
-      (Vector2){
+  const Rectangle xbox_texture_source[] = {
+      (Rectangle){
           .x = 16.0f,
           .y = 32.0f,
+          .width = 16.0f,
+          .height = 16.0f,
       },
-      (Vector2){
+      (Rectangle){
           .x = 16.0f,
           .y = 48.0f,
+          .width = 16.0f,
+          .height = 16.0f,
       },
-      (Vector2){
+      (Rectangle){
           .x = 16.0f,
           .y = 64.0f,
+          .width = 16.0f,
+          .height = 16.0f,
       },
-      (Vector2){
+      (Rectangle){
           .x = 16.0f,
           .y = 80.0f,
+          .width = 16.0f,
+          .height = 16.0f,
       },
   };
+
+  const u8 XBOX_TEXTURE_COMPONENTS = ARRAY_LENGTH(xbox_texture_source);
 
   Sprite sprite = (Sprite){
       .texture = LoadTexture("./resources/sprites/blue.png"),
@@ -210,68 +228,41 @@ int main(void) {
       f64 x = 10.0f;
 
       for (u8 index = 0u; index < KEYBOARD_TEXTURE_COMPONENTS; ++index) {
-        DrawTexturePro(keyboard_texture,
-                       (Rectangle){
-                           .x = keyboard_texture_source[index].x,
-                           .y = keyboard_texture_source[index].y,
-                           .width = 16.0f,
-                           .height = 16.0f,
-                       },
-                       (Rectangle){
-                           .x = x,
-                           .y = GetScreenHeight() - 32.0f - 10.0f,
-                           .width = 32.0f,
-                           .height = 32.0f,
-                       },
-                       (Vector2){
-                           .x = 0.0f,
-                           .y = 0.0f,
-                       },
-                       0, WHITE);
+        DrawTexturePro(
+            keyboard_texture, keyboard_texture_source[index],
+            (Rectangle){
+                .x = x,
+                .y = GetScreenHeight() -
+                     2.0f * keyboard_texture_source[index].height - 10.0f,
+                .width = 2.0f * keyboard_texture_source[index].width,
+                .height = 2.0f * keyboard_texture_source[index].height,
+            },
+            (Vector2){
+                .x = 0.0f,
+                .y = 0.0f,
+            },
+            0, WHITE);
 
         x += 32.0f;
       }
-
-      DrawTexturePro(keyboard_texture_extra,
-                     (Rectangle){
-                         .x = 0.0f,
-                         .y = 16.0f,
-                         .width = 32.0f,
-                         .height = 16.0f,
-                     },
-                     (Rectangle){
-                         .x = x,
-                         .y = GetScreenHeight() - 32.0f - 10.0f,
-                         .width = 64.0f,
-                         .height = 32.0f,
-                     },
-                     (Vector2){
-                         .x = 0.0f,
-                         .y = 0.0f,
-                     },
-                     0, WHITE);
     } else {
       f64 x = 10.0f;
 
       for (u8 index = 0u; index < XBOX_TEXTURE_COMPONENTS; ++index) {
-        DrawTexturePro(xbox_texture,
-                       (Rectangle){
-                           .x = xbox_texture_source[index].x,
-                           .y = xbox_texture_source[index].y,
-                           .width = 16.0f,
-                           .height = 16.0f,
-                       },
-                       (Rectangle){
-                           .x = x,
-                           .y = GetScreenHeight() - 32.0f - 10.0f,
-                           .width = 32.0f,
-                           .height = 32.0f,
-                       },
-                       (Vector2){
-                           .x = 0.0f,
-                           .y = 0.0f,
-                       },
-                       0, WHITE);
+        DrawTexturePro(
+            xbox_texture, xbox_texture_source[index],
+            (Rectangle){
+                .x = x,
+                .y = GetScreenHeight() -
+                     2.0f * xbox_texture_source[index].height - 10.0f,
+                .width = 2.0f * xbox_texture_source[index].width,
+                .height = 2.0f * xbox_texture_source[index].height,
+            },
+            (Vector2){
+                .x = 0.0f,
+                .y = 0.0f,
+            },
+            0, WHITE);
 
         x += 32.0f;
       }
@@ -283,8 +274,6 @@ int main(void) {
   UnloadTexture(xbox_texture);
 
   UnloadTexture(keyboard_texture);
-
-  UnloadTexture(keyboard_texture_extra);
 
   UnloadTexture(sprite.shadow);
 

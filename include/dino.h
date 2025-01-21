@@ -9,6 +9,8 @@
 
 #define MIN(X, Y) X < Y ? X : Y
 
+#define ARRAY_LENGTH(array) sizeof(array) / sizeof(array[0])
+
 typedef double f64;
 
 typedef float f32;
