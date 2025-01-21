@@ -47,6 +47,8 @@ int main(void) {
       },
   };
 
+  Texture2D sprite_shadow = LoadTexture("./resources/sprites/shadow.png");
+
   Sprite sprite = (Sprite){
       .texture = LoadTexture("./resources/sprites/blue.png"),
       .box = (Rectangle){.x = 0,
@@ -176,6 +178,25 @@ int main(void) {
 
     UpdateSprite(&sprite, GetTime());
 
+    DrawTexturePro(sprite_shadow,
+                   (Rectangle){
+                       .x = 0.0f,
+                       .y = 0.0f,
+                       .width = 24.0f,
+                       .height = 24.0f,
+                   },
+                   (Rectangle){
+                       .x = sprite.box.x,
+                       .y = sprite.box.y,
+                       .width = 48.0f,
+                       .height = 48.0f,
+                   },
+                   (Vector2){
+                       .x = 0.0f,
+                       .y = 0.0f,
+                   },
+                   0, WHITE);
+
     DrawSprite(&sprite);
 
     EndMode2D();
@@ -202,6 +223,7 @@ int main(void) {
                            .y = 0.0f,
                        },
                        0, WHITE);
+
         x += 32.0f;
       }
 
@@ -236,6 +258,8 @@ int main(void) {
   UnloadTexture(keyboard_texture);
 
   UnloadTexture(keyboard_texture_extra);
+
+  UnloadTexture(sprite_shadow);
 
   UnloadTexture(sprite.texture);
 
