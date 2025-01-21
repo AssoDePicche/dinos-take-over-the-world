@@ -19,6 +19,34 @@ int main(void) {
 
   PlayMusicStream(theme);
 
+  Texture2D keyboard_texture =
+      LoadTexture("./resources/ui/desktop/default.png");
+
+  Texture2D keyboard_texture_extra =
+      LoadTexture("./resources/ui/desktop/extra.png");
+
+  const u8 KEYBOARD_TEXTURE_COMPONENTS = 4u;
+
+  // A, D, K, Q
+  const Vector2 keyboard_texture_source[] = {
+      (Vector2){
+          .x = 0.0f,
+          .y = 32.0f,
+      },
+      (Vector2){
+          .x = 48.0f,
+          .y = 32.0f,
+      },
+      (Vector2){
+          .x = 32.0f,
+          .y = 48.0f,
+      },
+      (Vector2){
+          .x = 0.0f,
+          .y = 64.0f,
+      },
+  };
+
   Sprite sprite = (Sprite){
       .texture = LoadTexture("./resources/sprites/blue.png"),
       .box = (Rectangle){.x = 0,
@@ -153,11 +181,48 @@ int main(void) {
     EndMode2D();
 
     if (IsGamepadAvailable(gamepad)) {
-      DrawText(TextFormat("%s\n<D-pad> - right/left (hold <A> to run)\n<Y> - "
-                          "attack\n<SELECT> - "
-                          "help",
-                          GetGamepadName(gamepad)),
-               10, 10, 20, BLACK);
+      f64 x = 10.0f;
+
+      for (u8 index = 0u; index < KEYBOARD_TEXTURE_COMPONENTS; ++index) {
+        DrawTexturePro(keyboard_texture,
+                       (Rectangle){
+                           .x = keyboard_texture_source[index].x,
+                           .y = keyboard_texture_source[index].y,
+                           .width = 16.0f,
+                           .height = 16.0f,
+                       },
+                       (Rectangle){
+                           .x = x,
+                           .y = GetScreenHeight() - 32.0f - 10.0f,
+                           .width = 32.0f,
+                           .height = 32.0f,
+                       },
+                       (Vector2){
+                           .x = 0.0f,
+                           .y = 0.0f,
+                       },
+                       0, WHITE);
+        x += 32.0f;
+      }
+
+      DrawTexturePro(keyboard_texture_extra,
+                     (Rectangle){
+                         .x = 0.0f,
+                         .y = 16.0f,
+                         .width = 32.0f,
+                         .height = 16.0f,
+                     },
+                     (Rectangle){
+                         .x = x,
+                         .y = GetScreenHeight() - 32.0f - 10.0f,
+                         .width = 64.0f,
+                         .height = 32.0f,
+                     },
+                     (Vector2){
+                         .x = 0.0f,
+                         .y = 0.0f,
+                     },
+                     0, WHITE);
     } else {
       DrawText(
           "<A>/<D> - right/left (hold <Shift> to run)\n<K> - attack\n<H> - "
@@ -167,6 +232,10 @@ int main(void) {
 
     EndDrawing();
   }
+
+  UnloadTexture(keyboard_texture);
+
+  UnloadTexture(keyboard_texture_extra);
 
   UnloadTexture(sprite.texture);
 
