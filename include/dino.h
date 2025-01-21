@@ -3,6 +3,7 @@
 
 #include <raylib.h>
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
 
 #define MAX(X, Y) X > Y ? X : Y
@@ -46,7 +47,11 @@ typedef struct Animation {
   u8 currentFrame;
   Sfx *sfx;
   bool loop;
+  bool ended;
+  bool restart;
 } Animation;
+
+void UpdateAnimation(Animation *, const f64);
 
 typedef enum SpriteState {
   SPRITE_STATE_IDLE = 0u,
@@ -63,6 +68,7 @@ typedef struct Sprite {
   f32 walk_speed;
   f32 run_speed;
   u8 textureFrames;
+  u8 lifes;
   SpriteState state;
   bool facingRight;
   bool isRunning;

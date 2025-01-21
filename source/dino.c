@@ -1,5 +1,35 @@
 #include "dino.h"
 
+void UpdateAnimation(Animation *this, const f64 now) {
+  if (now <= this->timer + this->frameTime) {
+    this->ended = false;
+
+    return;
+  }
+
+  this->timer = now;
+
+  ++this->currentFrame;
+
+  if (this->currentFrame < this->lastFrame) {
+    this->ended = false;
+
+    return;
+  }
+
+  if (this->loop || (this->restart && this->ended)) {
+    this->currentFrame = this->firstFrame;
+
+    this->ended = false;
+
+    return;
+  }
+
+  this->currentFrame = this->lastFrame;
+
+  this->ended = true;
+}
+
 void DrawSprite(const Sprite *this) {
   const u64 sprite_width = this->texture.width / this->textureFrames;
 
@@ -54,6 +84,8 @@ void DrawSprite(const Sprite *this) {
 }
 
 void UpdateSprite(Sprite *this, const f64 now) {
+  UpdateAnimation(this->animation, now);
+
   if (this->state == SPRITE_STATE_WALKING) {
     this->box.x = this->facingRight ? MIN(this->box.x + this->walk_speed,
                                           GetScreenWidth() - this->box.width)
@@ -66,19 +98,8 @@ void UpdateSprite(Sprite *this, const f64 now) {
                                       : MAX(this->box.x - this->run_speed, 0);
   }
 
-  if (now <= this->animation->timer + this->animation->frameTime) {
-    return;
+  if (this->state == SPRITE_STATE_HURTING && this->lifes != 0u &&
+      this->animation->ended) {
+    --this->lifes;
   }
-
-  this->animation->timer = now;
-
-  ++this->animation->currentFrame;
-
-  if (this->animation->currentFrame < this->animation->lastFrame) {
-    return;
-  }
-
-  this->animation->currentFrame = this->animation->loop
-                                      ? this->animation->firstFrame
-                                      : this->animation->lastFrame;
 }
