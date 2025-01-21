@@ -121,7 +121,7 @@ int main(void) {
           sprite.isRunning ? SPRITE_STATE_RUNNING : SPRITE_STATE_WALKING;
     }
 
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) ||
+    if (IsKeyPressed(KEY_K) ||
         IsGamepadButtonPressed(gamepad, GAMEPAD_BUTTON_RIGHT_FACE_LEFT)) {
       animation[SPRITE_STATE_ATTACKING].currentFrame =
           animation[SPRITE_STATE_ATTACKING].firstFrame;
@@ -145,6 +145,21 @@ int main(void) {
     UpdateSprite(&sprite, GetTime());
 
     DrawSprite(&sprite);
+
+    EndMode2D();
+
+    if (IsGamepadAvailable(gamepad)) {
+      DrawText(TextFormat("%s\n<D-pad> - right/left (hold <A> to run)\n<Y> - "
+                          "attack\n<SELECT> - "
+                          "help",
+                          GetGamepadName(gamepad)),
+               10, 10, 20, BLACK);
+    } else {
+      DrawText(
+          "<A>/<D> - right/left (hold <Shift> to run)\n<K> - attack\n<H> - "
+          "help",
+          10, 10, 20, BLACK);
+    }
 
     EndDrawing();
   }
