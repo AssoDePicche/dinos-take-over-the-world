@@ -48,9 +48,16 @@ int main(void) {
 
   Music theme = LoadMusicStream("./resources/music/manlorette_party.mp3");
 
-  SetMusicVolume(theme, 0.0f);
+  SetMusicVolume(theme, 0.75f);
 
   PlayMusicStream(theme);
+
+  Texture2D music_icon = LoadTexture("./resources/ui/icons/music.png");
+
+  Texture2D controller_icon =
+      LoadTexture("./resources/ui/icons/controller.png");
+
+  Texture2D keyboard_icon = LoadTexture("./resources/ui/icons/keyboard.png");
 
   Texture2D keyboard_texture = LoadTexture("./resources/ui/keyboard.png");
 
@@ -279,10 +286,67 @@ int main(void) {
                      0, WHITE);
     }
 
+    DrawTexturePro(music_icon,
+                   (Rectangle){
+                       .x = 0.0f,
+                       .y = 0.0f,
+                       .width = 24.0f,
+                       .height = 24.0f,
+                   },
+                   (Rectangle){
+                       .x = GetScreenWidth() - 2.0f * 32.0f - 2.0f * 10.0f,
+                       .y = 10.0f,
+                       .width = 32.0f,
+                       .height = 32.0f,
+                   },
+                   (Vector2){
+                       .x = 0.0f,
+                       .y = 0.0f,
+                   },
+                   0, WHITE);
+
     if (!IsGamepadAvailable(gamepad)) {
+      DrawTexturePro(keyboard_icon,
+                     (Rectangle){
+                         .x = 0.0f,
+                         .y = 0.0f,
+                         .width = 24.0f,
+                         .height = 24.0f,
+                     },
+                     (Rectangle){
+                         .x = GetScreenWidth() - 32.0f - 10.0f,
+                         .y = 10.0f,
+                         .width = 32.0f,
+                         .height = 32.0f,
+                     },
+                     (Vector2){
+                         .x = 0.0f,
+                         .y = 0.0f,
+                     },
+                     0, WHITE);
+
       DrawRecArray(keyboard_texture_source, KEYBOARD_TEXTURE_COMPONENTS,
                    keyboard_texture);
     } else {
+      DrawTexturePro(controller_icon,
+                     (Rectangle){
+                         .x = 0.0f,
+                         .y = 0.0f,
+                         .width = 24.0f,
+                         .height = 24.0f,
+                     },
+                     (Rectangle){
+                         .x = GetScreenWidth() - 32.0f - 10.0f,
+                         .y = 10.0f,
+                         .width = 32.0f,
+                         .height = 32.0f,
+                     },
+                     (Vector2){
+                         .x = 0.0f,
+                         .y = 0.0f,
+                     },
+                     0, WHITE);
+
       DrawRecArray(xbox_texture_source, XBOX_TEXTURE_COMPONENTS, xbox_texture);
     }
 
@@ -292,6 +356,12 @@ int main(void) {
   UnloadTexture(xbox_texture);
 
   UnloadTexture(keyboard_texture);
+
+  UnloadTexture(keyboard_icon);
+
+  UnloadTexture(controller_icon);
+
+  UnloadTexture(music_icon);
 
   UnloadTexture(sprite.shadow);
 
