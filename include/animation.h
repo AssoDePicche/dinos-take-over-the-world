@@ -2,6 +2,8 @@
 
 #include <raylib.h>
 
+#include <memory>
+
 struct Sfx final {
   Sound sound;
   float volume;
@@ -16,6 +18,7 @@ struct Animation final {
   bool loop{false};
   bool ended{false};
   bool restart{false};
+  std::shared_ptr<Sfx> sfx = nullptr;
 
   Animation(double, unsigned, unsigned, bool, bool);
 
