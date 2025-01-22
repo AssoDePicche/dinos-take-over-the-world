@@ -1,8 +1,6 @@
 #include "sprite.h"
 
-#define MAX(X, Y) X > Y ? X : Y
-
-#define MIN(X, Y) X < Y ? X : Y
+#include <algorithm>
 
 void Sprite::draw(void) const {
   const auto sprite_width = this->texture.width / this->textureFrames;
@@ -44,15 +42,17 @@ void Sprite::update(double now) {
   this->animation->update(now);
 
   if (this->state == SPRITE_STATE_WALKING) {
-    this->box.x = this->facingRight ? MIN(this->box.x + this->walkSpeed,
-                                          GetScreenWidth() - this->box.width)
-                                    : MAX(this->box.x - this->walkSpeed, 0);
+    this->box.x = this->facingRight
+                      ? std::min(this->box.x + this->walkSpeed,
+                                 GetScreenWidth() - this->box.width)
+                      : std::max(this->box.x - this->walkSpeed, 0.0f);
   }
 
   if (this->state == SPRITE_STATE_RUNNING) {
-    this->box.x = (this->facingRight) ? MIN(this->box.x + this->runSpeed,
-                                            GetScreenWidth() - this->box.width)
-                                      : MAX(this->box.x - this->runSpeed, 0);
+    this->box.x = (this->facingRight)
+                      ? std::min(this->box.x + this->runSpeed,
+                                 GetScreenWidth() - this->box.width)
+                      : std::max(this->box.x - this->runSpeed, 0.0f);
   }
 
   if (this->state == SPRITE_STATE_HURTING && this->lifes != 0u &&
