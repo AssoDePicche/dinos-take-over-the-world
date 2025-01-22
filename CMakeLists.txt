@@ -10,6 +10,8 @@ set(BUILD_EXAMPLES OFF CACHE BOOL "Don't build raylib examples")
 
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build raylib as a static library")
 
+cmake_policy(SET CMP0135 NEW)
+
 include(FetchContent)
 
 FetchContent_Declare(
@@ -19,7 +21,13 @@ FetchContent_Declare(
   SOURCE_DIR ./third_party/raylib
 )
 
-FetchContent_MakeAvailable(raylib)
+FetchContent_Declare(
+  json
+  URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz
+  SOURCE_DIR ./third_party/json
+)
+
+FetchContent_MakeAvailable(raylib json)
 
 file(GLOB SOURCES ./source/*.cpp)
 
@@ -31,4 +39,4 @@ target_include_directories(${PROJECT_NAME} PRIVATE include)
 
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE raylib)
+target_link_libraries(${PROJECT_NAME} PRIVATE raylib nlohmann_json::nlohmann_json)
