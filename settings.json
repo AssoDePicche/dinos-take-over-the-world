@@ -1,0 +1,9 @@
+{
+  "window":{
+    "title": "Dinos Take Over The World!",
+    "height": 360,
+    "width": 480,
+    "fps": 60,
+    "volume": 0.75
+  }
+}
