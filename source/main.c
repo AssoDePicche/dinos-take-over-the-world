@@ -33,24 +33,110 @@ void DrawRecArray(const Rectangle array[], const u8 length,
   }
 }
 
-int main(void) {
-  const u8 gamepad = 0;
-
+void setup_window(void) {
   InitWindow(480, 360, "Dinos Take Over The World!");
 
   SetExitKey(KEY_Q);
 
   SetTargetFPS(60);
 
+  InitAudioDevice();
+}
+
+void teardown_window(void) {
+  CloseAudioDevice();
+
+  CloseWindow();
+}
+
+int main(void) {
+  const u8 gamepad = 0;
+
   const f64 DEFAULT_FRAME_TIME = 1.0f / 12.0f;
 
-  InitAudioDevice();
+  size_t rows;
+
+  size_t columns;
+
+  int *map = load_map("./resources/map.txt", &rows, &columns);
+
+  if (map == NULL) {
+    return 1;
+  }
+
+  setup_window();
 
   Music theme = LoadMusicStream("./resources/music/manlorette_party.mp3");
 
   SetMusicVolume(theme, 0.75f);
 
   PlayMusicStream(theme);
+
+  Texture2D map_texture =
+      LoadTexture("./resources/sprites/palm_tree_32x32.png");
+
+  const Rectangle map_texture_sources[] = {
+      (Rectangle){
+          .x = 0.0f,
+          .y = 0.0f,
+          .width = 0.0f,
+          .height = 0.0f,
+      },
+      (Rectangle){
+          .x = 0.0f,
+          .y = 0.0f,
+          .width = 32.0f,
+          .height = 32.0f,
+      },
+      (Rectangle){
+          .x = 32.0f,
+          .y = 0.0f,
+          .width = 32.0f,
+          .height = 32.0f,
+      },
+      (Rectangle){
+          .x = 64.0f,
+          .y = 0.0f,
+          .width = 32.0f,
+          .height = 32.0f,
+      },
+      (Rectangle){
+          .x = 0.0f,
+          .y = 32.0f,
+          .width = 32.0f,
+          .height = 32.0f,
+      },
+      (Rectangle){
+          .x = 32.0f,
+          .y = 32.0f,
+          .width = 32.0f,
+          .height = 32.0f,
+      },
+      (Rectangle){
+          .x = 64.0f,
+          .y = 32.0f,
+          .width = 32.0f,
+          .height = 32.0f,
+      },
+      (Rectangle){
+          .x = 0.0f,
+          .y = 64.0f,
+          .width = 32.0f,
+          .height = 32.0f,
+      },
+      (Rectangle){
+          .x = 32.0f,
+          .y = 64.0f,
+          .width = 32.0f,
+          .height = 32.0f,
+      },
+      (Rectangle){
+          .x = 64.0f,
+          .y = 64.0f,
+          .width = 32.0f,
+          .height = 32.0f,
+      },
+  };
 
   Texture2D music_icon = LoadTexture("./resources/ui/icons/music.png");
 
@@ -135,8 +221,8 @@ int main(void) {
   Sprite sprite = (Sprite){
       .texture = LoadTexture("./resources/sprites/blue.png"),
       .shadow = LoadTexture("./resources/sprites/shadow.png"),
-      .box = (Rectangle){.x = 0,
-                         .y = GetScreenHeight() - 48.0f,
+      .box = (Rectangle){.x = GetScreenWidth() / 2.0f,
+                         .y = (GetScreenHeight() - 48.0f) / 2.0f - 10.0f,
                          .width = 48.0f,
                          .height = 48.0f},
       .state = SPRITE_STATE_IDLE,
@@ -261,6 +347,37 @@ int main(void) {
 
     UpdateSprite(&sprite, GetTime());
 
+    size_t x = 0.0f;
+
+    size_t y = (GetScreenHeight() - 8 * 32.0f) / 2.0f;
+
+    for (size_t i = 0; i < rows; ++i) {
+      for (size_t j = 0; j < columns; ++j) {
+        const size_t index = i * columns + j;
+
+        const int tile = map[index];
+
+        DrawTexturePro(map_texture, map_texture_sources[tile],
+                       (Rectangle){
+                           .x = x,
+                           .y = y,
+                           .width = 32.0f,
+                           .height = 32.0f,
+                       },
+                       (Vector2){
+                           .x = 0.0f,
+                           .y = 0.0f,
+                       },
+                       0, WHITE);
+
+        x += 32.0f;
+      }
+
+      x = 0.0f;
+
+      y += 32.0f;
+    }
+
     DrawSprite(&sprite);
 
     EndMode2D();
@@ -353,6 +470,8 @@ int main(void) {
     EndDrawing();
   }
 
+  UnloadTexture(map_texture);
+
   UnloadTexture(xbox_texture);
 
   UnloadTexture(keyboard_texture);
@@ -371,9 +490,9 @@ int main(void) {
 
   UnloadMusicStream(theme);
 
-  CloseAudioDevice();
+  teardown_window();
 
-  CloseWindow();
+  destroy_map(map);
 
   return 0;
 }

@@ -80,4 +80,8 @@ void DrawSprite(const Sprite *);
 
 void UpdateSprite(Sprite *, const f64);
 
+int *load_map(const Str, size_t *, size_t *);
+
+void destroy_map(int *);
+
 #endif

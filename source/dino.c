@@ -1,5 +1,8 @@
 #include "dino.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+
 void UpdateAnimation(Animation *this, const f64 now) {
   if (now <= this->timer + this->frameTime) {
     this->ended = false;
@@ -109,3 +112,27 @@ void UpdateSprite(Sprite *this, const f64 now) {
     this->state = SPRITE_STATE_IDLE;
   }
 }
+
+int *load_map(const Str filename, size_t *rows, size_t *columns) {
+  FILE *stream = fopen(filename, "r");
+
+  if (stream == NULL) {
+    return NULL;
+  }
+
+  fscanf(stream, "%zu %zu", rows, columns);
+
+  const size_t length = (*rows) * (*columns);
+
+  int *buffer = (int *)malloc(sizeof(int) * length);
+
+  for (size_t index = 0; index < length; ++index) {
+    fscanf(stream, "%d", &buffer[index]);
+  }
+
+  fclose(stream);
+
+  return buffer;
+}
+
+void destroy_map(int *buffer) { free(buffer); }
