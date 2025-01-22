@@ -1,5 +1,8 @@
 #include <raylib.h>
 
+#include <filesystem>
+#include <fstream>
+#include <nlohmann/json.hpp>
 #include <vector>
 
 #include "animation.h"
@@ -30,6 +33,14 @@ void DrawRecArray(const std::vector<Rectangle> array, const Texture2D texture) {
 }
 
 auto main(void) -> int {
+  if (!std::filesystem::exists("settings.json")) {
+    return 0;
+  }
+
+  std::ifstream stream("settings.json");
+
+  nlohmann::json json = nlohmann::json::parse(stream);
+
   const auto gamepad = 0;
 
   const auto DEFAULT_FRAME_TIME = 1.0f / 12.0f;
@@ -44,17 +55,27 @@ auto main(void) -> int {
     return 1;
   }
 
-  InitWindow(480, 360, "Dinos Take Over The World!");
+  const int width = json["window"]["width"];
+
+  const int height = json["window"]["height"];
+
+  const std::string title = json["window"]["title"];
+
+  const int fps = json["window"]["fps"];
+
+  const float volume = json["window"]["volume"];
+
+  InitWindow(width, height, title.c_str());
 
   SetExitKey(KEY_Q);
 
-  SetTargetFPS(60);
+  SetTargetFPS(fps);
 
   InitAudioDevice();
 
   auto theme = LoadMusicStream("./resources/music/manlorette_party.mp3");
 
-  SetMusicVolume(theme, 0.75f);
+  SetMusicVolume(theme, volume);
 
   PlayMusicStream(theme);
 
