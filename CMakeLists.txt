@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(DinosTakeOverTheWorld C)
+project(DinosTakeOverTheWorld CXX)
 
-set(CMAKE_C_STANDARD 23)
+set(CMAKE_CXX_STANDARD 23)
 
-set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(BUILD_EXAMPLES OFF CACHE BOOL "Don't build raylib examples")
 
@@ -21,11 +21,11 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(raylib)
 
-file(GLOB SOURCES ./source/*.c)
+file(GLOB SOURCES ./source/*.cpp)
 
-list(REMOVE_ITEM SOURCES ./source/main.c)
+list(REMOVE_ITEM SOURCES ./source/main.cpp)
 
-add_executable(${PROJECT_NAME} ./source/main.c ${SOURCES})
+add_executable(${PROJECT_NAME} ./source/main.cpp ${SOURCES})
 
 target_include_directories(${PROJECT_NAME} PRIVATE include)
 
